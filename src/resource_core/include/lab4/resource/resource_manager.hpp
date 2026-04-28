@@ -6,25 +6,27 @@
 
 #include "file_handle.hpp"
 
-namespace lab4::resource {
+namespace lab4::resource
+{
 
-class ResourceManager {
- public:
-  ResourceManager(const ResourceManager&) = delete;
-  ResourceManager& operator=(const ResourceManager&) = delete;
+class ResourceManager
+{
+  public:
+    ResourceManager(const ResourceManager&) = delete;
+    ResourceManager& operator=(const ResourceManager&) = delete;
 
-  static ResourceManager& instance();
+    static ResourceManager& instance();
 
-  std::shared_ptr<FileHandle> open_file(const std::string& path);
+    std::shared_ptr<FileHandle> open_file(const std::string& path);
 
-  void close_file(const std::string& path);
+    void close_file(const std::string& path);
 
-  void cleanup();
+    void cleanup();
 
- private:
-  ResourceManager() = default;
+  private:
+    ResourceManager() = default;
 
-  std::unordered_map<std::string, std::weak_ptr<FileHandle>> cache_;
+    std::unordered_map<std::string, std::weak_ptr<FileHandle>> cache_;
 };
 
-}  // namespace lab4::resource
+} // namespace lab4::resource
