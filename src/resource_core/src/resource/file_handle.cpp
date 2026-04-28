@@ -119,5 +119,14 @@ void FileHandle::check_open() const
         throw ResourceError("File is not open: " + path_);
     }
 }
+FileHandle::~FileHandle()
+{
+    if (file_)
+    {
+        fclose(file_);
+        file_ = nullptr;
+        is_open_ = false;
+    }
+}
 
 } // namespace lab4::resource
