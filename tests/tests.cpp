@@ -112,7 +112,7 @@ TEST_CASE("FileHandle binary data", "[FileHandle]")
 {
     TempFile tf;
     FileHandle fh(tf.path());
-    std::vector<char> bin = {0x00, 0xFF, 0x7E};
+    std::vector<unsigned char> bin = {0x00, 0xFF, 0x7E};
     std::string data(bin.begin(), bin.end());
     fh.write(data);
     std::string read = fh.read();

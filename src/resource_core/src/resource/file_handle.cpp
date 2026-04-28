@@ -5,7 +5,7 @@
 namespace lab4::resource
 {
 
-FileHandle::FileHandle(const std::string& path) : path_(path), file_(nullptr), is_open_(false)
+FileHandle::FileHandle(const std::string& path) : file_(nullptr), path_(path), is_open_(false)
 {
     file_ = fopen(path_.c_str(), "r+");
     if (!file_)
@@ -62,9 +62,8 @@ std::string FileHandle::read() const
     long size = ftell(file_);
     fseek(file_, 0, SEEK_SET);
 
-    std::string content(size, '\0');
-    size_t bytes_read = fread(&content[0], 1, size, file_);
-
+    std::string content(static_cast<size_t>(size), '\0');
+    size_t bytes_read = fread(&content[0], 1, static_cast<size_t>(size), file_);
     if (bytes_read < static_cast<size_t>(size))
     {
         content.resize(bytes_read);
@@ -95,7 +94,6 @@ void FileHandle::write(const std::string& data)
     fflush(file_);
 }
 
-// ========== APPEND ==========
 void FileHandle::append(const std::string& data)
 {
     check_open();
@@ -111,7 +109,6 @@ void FileHandle::append(const std::string& data)
     fflush(file_);
 }
 
-// ========== ВСПОМОГАТЕЛЬНЫЕ ==========
 bool FileHandle::is_open() const noexcept
 {
     return is_open_;
