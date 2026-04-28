@@ -19,16 +19,6 @@ FileHandle::FileHandle(const std::string& path) : file_(nullptr), path_(path), i
     is_open_ = true;
 }
 
-FileHandle::~FileHandle()
-{
-    if (file_)
-    {
-        fclose(file_);
-        file_ = nullptr;
-        is_open_ = false;
-    }
-}
-
 FileHandle::FileHandle(FileHandle&& other) noexcept
     : file_(other.file_), path_(std::move(other.path_)), is_open_(other.is_open_)
 {
@@ -77,21 +67,24 @@ void FileHandle::write(const std::string& data)
 {
     check_open();
 
-    fclose(file_);
-    file_ = fopen(path_.c_str(), "w");
-    if (!file_)
+    FILE* new_file = fopen(path_.c_str(), "w");
+    if (!new_file)
     {
         throw ResourceError("Failed to reopen file: " + path_);
     }
 
-    size_t written = fwrite(data.c_str(), 1, data.size(), file_);
+    size_t written = fwrite(data.c_str(), 1, data.size(), new_file);
     if (written != data.size())
     {
+        fclose(new_file);
         throw ResourceError("Failed to write all data to: " + path_);
     }
 
+    fflush(new_file);
+
+    fclose(file_);
+    file_ = new_file;
     is_open_ = true;
-    fflush(file_);
 }
 
 void FileHandle::append(const std::string& data)
